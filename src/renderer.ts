@@ -184,7 +184,6 @@ function renderTable(token: Token, ctx: Context): string {
   
   if (!headers.length) return ''
   
-  // calculate column widths
   const colWidths = headers.map((h: string, i: number) => {
     const cellWidths = [h.length, ...rows.map((r: string[]) => (r[i] || '').length)]
     return Math.max(...cellWidths)
@@ -209,9 +208,9 @@ function renderTable(token: Token, ctx: Context): string {
     return '│ ' + styled.join(' │ ') + ' │'
   }
   
-  const separator = '├' + colWidths.map(w => '─'.repeat(w + 2)).join('┼') + '┤'
-  const top = '┌' + colWidths.map(w => '─'.repeat(w + 2)).join('┬') + '┐'
-  const bottom = '└' + colWidths.map(w => '─'.repeat(w + 2)).join('┴') + '┘'
+  const separator = '├' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┼') + '┤'
+  const top = '┌' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┬') + '┐'
+  const bottom = '└' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┴') + '┘'
   
   const tableLines = [
     top,
@@ -235,7 +234,6 @@ function wrapText(text: string, width: number): string {
       continue
     }
     
-    // simple word wrap - not perfect with ansi but good enough
     const words = paragraph.split(' ')
     let current = ''
     

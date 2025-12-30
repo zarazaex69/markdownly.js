@@ -1,5 +1,3 @@
-// ansi escape codes for terminal styling
-
 const ESC = '\x1b['
 const RESET = `${ESC}0m`
 
@@ -44,11 +42,9 @@ export const italic = wrap('3', '23')
 export const underline = wrap('4', '24')
 export const strikethrough = wrap('9', '29')
 
-// compose multiple styles
 export const compose = (...fns: StyleFn[]): StyleFn => 
   (s: string) => fns.filter(Boolean).reduce((acc, fn) => fn(acc), s)
 
-// get terminal width
 export const getTerminalWidth = (): number => {
   try {
     return process.stdout.columns || 80

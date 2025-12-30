@@ -44,5 +44,8 @@
   "homepage": "https://github.com/zarazaex69/markdown.js#readme",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
   }
 }

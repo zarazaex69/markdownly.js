@@ -1,5 +1,3 @@
-// markdown parser - converts markdown to tokens
-
 export type TokenType = 
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   | 'paragraph' | 'blockquote' | 'code_block' | 'code_inline'
@@ -352,7 +350,6 @@ export function parseInline(text: string): Token[] {
       continue
     }
     
-    // line break
     if (remaining.startsWith('\n')) {
       tokens.push({ type: 'br', content: '\n' })
       remaining = remaining.slice(1)
@@ -360,7 +357,6 @@ export function parseInline(text: string): Token[] {
       continue
     }
     
-    // plain text - consume until next special char
     if (!matched) {
       const nextSpecial = remaining.slice(1).search(/[*_`~\[!\^=+\n]/)
       const end = nextSpecial === -1 ? remaining.length : nextSpecial + 1

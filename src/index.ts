@@ -1,6 +1,3 @@
-// cli-markdown - render markdown to terminal
-// zero dependencies
-
 import { parse } from './parser'
 import { render } from './renderer'
 
