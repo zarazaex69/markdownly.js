@@ -1,0 +1,48 @@
+{
+  "name": "markdown.js",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Render Markdown to Terminal - Zero Dependencies",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "markdown": "dist/cli.js",
+    "md": "dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target node && bun build ./src/cli.ts --outdir ./dist --target node",
+    "dev": "bun run src/cli.ts",
+    "test": "bun run src/cli.ts example/index.md"
+  },
+  "keywords": [
+    "markdown",
+    "terminal",
+    "cli",
+    "render",
+    "ansi",
+    "zero-dependencies"
+  ],
+  "author": "zarazaex",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zarazaex69/markdown.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zarazaex69/markdown.js/issues"
+  },
+  "homepage": "https://github.com/zarazaex69/markdown.js#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
