@@ -151,32 +151,51 @@ function renderCodeBlock(token: Token, ctx: Context): string {
   }).join('\n')
 }
 
-function renderList(token: Token, ctx: Context): string {
+function renderList(token: Token, ctx: Context, baseDepth = 0): string {
   const items = token.children || []
-  let orderedNum = 1
+  const markers = ['•', '-', '‣']
   
-  return items.map(item => {
+  const result: string[] = []
+  
+  for (const item of items) {
     const ordered = item.meta?.ordered
     const checked = item.meta?.checked
+    const depth = (item.meta?.depth || 0) - baseDepth
+    const start = item.meta?.start || 1
+    
+    const indentStr = ' '.repeat(depth * 2)
     
     let bullet: string
     if (checked !== undefined) {
       const check = checked ? ansi.green('✓') : ' '
       bullet = ansi.grey('[') + check + ansi.grey(']')
     } else if (ordered) {
-      bullet = ansi.blueBright(`${orderedNum++}.`)
+      bullet = ansi.blueBright(`${start}.`)
     } else {
-      bullet = ansi.redBright('•')
+      const markerIdx = depth % markers.length
+      bullet = ansi.redBright(markers[markerIdx])
     }
     
     const content = renderInline(item.children || [])
-    const wrapped = wrapText(content, ctx.width - 4)
+    const wrapped = wrapText(content, ctx.width - 4 - depth * 2)
     const indented = wrapped.split('\n').map((line, i) => 
-      i === 0 ? `${bullet} ${line}` : `    ${line}`
+      i === 0 ? `${indentStr}${bullet} ${line}` : `${indentStr}    ${line}`
     ).join('\n')
     
-    return indented
-  }).join('\n')
+    result.push(indented)
+    
+    // render nested items
+    if (item.meta?.nested) {
+      const nestedToken: Token = {
+        type: 'list',
+        content: '',
+        children: item.meta.nested
+      }
+      result.push(renderList(nestedToken, ctx, baseDepth))
+    }
+  }
+  
+  return result.join('\n')
 }
 
 function renderTable(token: Token, ctx: Context): string {

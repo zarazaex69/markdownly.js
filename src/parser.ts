@@ -13,12 +13,6 @@ export interface Token {
   meta?: Record<string, any>
 }
 
-interface ListState {
-  indent: number
-  ordered: boolean
-  start: number
-}
-
 export function parse(markdown: string): Token[] {
   const lines = markdown.split('\n')
   const tokens: Token[] = []
@@ -27,7 +21,6 @@ export function parse(markdown: string): Token[] {
   while (i < lines.length) {
     const line = lines[i]
     
-    // empty line
     if (line.trim() === '') {
       i++
       continue
@@ -174,47 +167,76 @@ function parseList(lines: string[], startIndex: number): { items: Token[], endIn
   const items: Token[] = []
   let i = startIndex
   
+  // get base indent level
+  const firstMatch = lines[i].match(/^(\s*)/)
+  const baseIndent = firstMatch ? firstMatch[1].length : 0
+  
   while (i < lines.length) {
     const line = lines[i]
-    const match = line.match(/^(\s*)([*+-]|\d+\.)\s(.*)$/)
     
-    if (!match && line.trim() === '') {
+    if (line.trim() === '') {
       i++
       continue
     }
     
+    const match = line.match(/^(\s*)([*+-]|(\d+)\.)\s(.*)$/)
     if (!match) break
     
-    const [, indent, marker, content] = match
-    const ordered = /\d+\./.test(marker)
-    const checked = content.match(/^\[([ xX])\]\s*(.*)$/)
+    const [, indentStr, marker, startNum, content] = match
+    const indent = indentStr.length
     
+    // if less indented than base, we're done with this list
+    if (indent < baseIndent) break
+    
+    const ordered = /\d+\./.test(marker)
+    const start = startNum ? parseInt(startNum, 10) : 1
+    const depth = Math.floor(indent / 2)
+    
+    const checked = content.match(/^\[([ xX])\]\s*(.*)$/)
     let itemContent = checked ? checked[2] : content
     const isChecked = checked ? checked[1].toLowerCase() === 'x' : undefined
     
-    // collect continuation lines
     i++
+    
+    // check for nested list
+    const nestedItems: Token[] = []
     while (i < lines.length) {
       const nextLine = lines[i]
+      
       if (nextLine.trim() === '') {
         i++
         continue
       }
-      if (nextLine.match(/^(\s*)([*+-]|\d+\.)\s/)) break
-      if (nextLine.match(/^\s{2,}/)) {
-        itemContent += '\n' + nextLine.trim()
-        i++
-      } else {
-        break
+      
+      const nextMatch = nextLine.match(/^(\s*)([*+-]|\d+\.)\s/)
+      if (!nextMatch) break
+      
+      const nextIndent = nextMatch[1].length
+      
+      // nested list - more indented
+      if (nextIndent > indent) {
+        const nested = parseList(lines, i)
+        nestedItems.push(...nested.items)
+        i = nested.endIndex
+        continue
       }
+      
+      // same or less indent - back to parent
+      break
     }
     
-    items.push({
+    const item: Token = {
       type: 'list_item',
       content: itemContent,
       children: parseInline(itemContent),
-      meta: { ordered, checked: isChecked }
-    })
+      meta: { ordered, checked: isChecked, depth, start }
+    }
+    
+    if (nestedItems.length > 0) {
+      item.meta!.nested = nestedItems
+    }
+    
+    items.push(item)
   }
   
   return { items, endIndex: i }
