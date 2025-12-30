@@ -46,22 +46,22 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: markdown.js v${{ steps.version.outputs.VERSION }}
+          name: markdownly.js v${{ steps.version.outputs.VERSION }}
           body: |
-            ## markdown.js v${{ steps.version.outputs.VERSION }}
+            ## markdownly.js v${{ steps.version.outputs.VERSION }}
 
             ### Installation
             ```bash
             # bun
-            bun add markdown.js
+            bun add markdownly.js
 
             # npm
-            npm install markdown.js
+            npm install markdownly.js
             ```
 
             ### Usage
             ```typescript
-            import { markdown } from "markdown.js"
+            import { markdown } from "markdownly.js"
 
             const output = markdown("# Hello World")
             console.log(output)

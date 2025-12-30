@@ -208,9 +208,9 @@ function renderTable(token: Token, ctx: Context): string {
     return '│ ' + styled.join(' │ ') + ' │'
   }
   
-  const separator = '├' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┼') + '┤'
-  const top = '┌' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┬') + '┐'
-  const bottom = '└' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┴') + '┘'
+  const separator = '├' + colWidths.map(w => '─'.repeat(w + 2)).join('┼') + '┤'
+  const top = '┌' + colWidths.map(w => '─'.repeat(w + 2)).join('┬') + '┐'
+  const bottom = '└' + colWidths.map(w => '─'.repeat(w + 2)).join('┴') + '┘'
   
   const tableLines = [
     top,

@@ -1,5 +1,5 @@
 {
-  "name": "markdown.js",
+  "name": "markdownly.js",
   "version": "1.0.0",
   "type": "module",
   "description": "Render Markdown to Terminal - Zero Dependencies",
@@ -36,12 +36,12 @@
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zarazaex69/markdown.js.git"
+    "url": "git+https://github.com/zarazaex69/markdownly.js.git"
   },
   "bugs": {
-    "url": "https://github.com/zarazaex69/markdown.js/issues"
+    "url": "https://github.com/zarazaex69/markdownly.js/issues"
   },
-  "homepage": "https://github.com/zarazaex69/markdown.js#readme",
+  "homepage": "https://github.com/zarazaex69/markdownly.js#readme",
   "engines": {
     "node": ">=18.0.0"
   },
