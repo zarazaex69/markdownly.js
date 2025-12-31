@@ -2,9 +2,9 @@
 
 ![Bun](https://img.shields.io/badge/-Bun-0D1117?style=flat-square&logo=Bun&logoColor=F3E6D8)
 ![TypeScript](https://img.shields.io/badge/-TypeScript-0D1117?style=flat-square&logo=typescript&logoColor=3178C6)
-![License](https://img.shields.io/badge/license-BSD--2--Clause-0D1117?style=flat-square&logo=open-source-initiative&logoColor=green&labelColor=0D1117)
+![License](https://img.shields.io/badge/license-BSD--3--Clause-0D1117?style=flat-square&logo=open-source-initiative&logoColor=green&labelColor=0D1117)
 
-# markdown.js
+# markdownly.js
 
 Render Markdown to Terminal — Zero Dependencies
 
@@ -30,10 +30,10 @@ Supports:
 
 ```bash
 # bun
-bun add markdown.js
+bun add markdownly.js
 
 # npm
-npm install markdown.js
+npm install markdownly.js
 ```
 
 ## CLI Usage
@@ -52,7 +52,7 @@ markdown docs/guide.md
 ## API Usage
 
 ```typescript
-import { markdown } from "markdown.js"
+import { markdown } from "markdownly.js"
 
 const output = markdown(`
 # Hello World
@@ -75,7 +75,7 @@ console.log(output)
 Main function. Parses markdown and returns ANSI-styled string for terminal output.
 
 ```typescript
-import { markdown } from "markdown.js"
+import { markdown } from "markdownly.js"
 
 console.log(markdown("# Title"))
 ```
@@ -85,7 +85,7 @@ console.log(markdown("# Title"))
 Low-level parser. Returns array of tokens.
 
 ```typescript
-import { parse } from "markdown.js"
+import { parse } from "markdownly.js"
 
 const tokens = parse("# Hello")
 // [{ type: 'h1', content: 'Hello', children: [...] }]
@@ -96,7 +96,7 @@ const tokens = parse("# Hello")
 Low-level renderer. Converts tokens to ANSI string.
 
 ```typescript
-import { parse, render } from "markdown.js"
+import { parse, render } from "markdownly.js"
 
 const tokens = parse("**bold**")
 const output = render(tokens)
@@ -196,8 +196,8 @@ Supported languages: JavaScript, TypeScript, Go, Python, Bash, HTML, CSS, JSON, 
 
 ```bash
 # clone
-git clone https://github.com/zarazaex69/markdown.js.git
-cd markdown.js
+git clone https://github.com/zarazaex69/markdownly.js.git
+cd markdownly.js
 
 # run
 bun run src/cli.ts example/index.md
