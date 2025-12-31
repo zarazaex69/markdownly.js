@@ -2,7 +2,7 @@
 
 import * as ansi from './ansi'
 import { highlight } from './highlight'
-import { Token, parseInline } from './parser'
+import { type Token, parseInline } from './parser'
 
 const getWidth = (): number => Math.min(120, ansi.getTerminalWidth() - 2)
 
@@ -227,9 +227,9 @@ function renderTable(token: Token, ctx: Context): string {
     return '│ ' + styled.join(' │ ') + ' │'
   }
   
-  const separator = '├' + colWidths.map(w => '─'.repeat(w + 2)).join('┼') + '┤'
-  const top = '┌' + colWidths.map(w => '─'.repeat(w + 2)).join('┬') + '┐'
-  const bottom = '└' + colWidths.map(w => '─'.repeat(w + 2)).join('┴') + '┘'
+  const separator = '├' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┼') + '┤'
+  const top = '┌' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┬') + '┐'
+  const bottom = '└' + colWidths.map((w: number) => '─'.repeat(w + 2)).join('┴') + '┘'
   
   const tableLines = [
     top,
