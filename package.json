@@ -1,6 +1,6 @@
 {
   "name": "markdownly.js",
-  "version": "1.0.0",
+  "version": "1.6.0",
   "type": "module",
   "description": "Render Markdown to Terminal - Zero Dependencies And fastly ",
   "main": "dist/index.js",
