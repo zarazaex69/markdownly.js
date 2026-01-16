@@ -1,10 +1,20 @@
 const ESC = '\x1b['
-const RESET = `${ESC}0m`
 
-type StyleFn = (s: string) => string
+export type StyleFn = (s: string) => string
 
-const wrap = (open: string, close: string): StyleFn => 
-  (s: string) => `${ESC}${open}m${s}${ESC}${close}m`
+const isColorEnabled = (): boolean => {
+  if (process.env.FORCE_COLOR === '1' || process.env.FORCE_COLOR === 'true') return true
+  if (process.env.NO_COLOR || process.env.FORCE_COLOR === '0') return false
+  if (typeof process.stdout?.isTTY === 'boolean') return process.stdout.isTTY
+  return true
+}
+
+const wrap = (open: string, close: string): StyleFn => {
+  return (s: string) => {
+    if (!isColorEnabled()) return s
+    return `${ESC}${open}m${s}${ESC}${close}m`
+  }
+}
 
 // basic colors
 export const red = wrap('31', '39')
@@ -52,3 +62,9 @@ export const getTerminalWidth = (): number => {
     return 80
   }
 }
+
+const ANSI_REGEX = /\x1b\[[0-9;]*m/g
+
+export const stripAnsi = (s: string): string => s.replace(ANSI_REGEX, '')
+
+export const visibleLength = (s: string): number => stripAnsi(s).length

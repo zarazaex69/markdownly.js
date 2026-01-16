@@ -1,5 +1,3 @@
-// renderer - converts tokens to terminal output
-
 import * as ansi from './ansi'
 import { highlight } from './highlight'
 import { type Token, parseInline } from './parser'
@@ -248,7 +246,7 @@ function wrapText(text: string, width: number): string {
   const lines: string[] = []
   
   for (const paragraph of text.split('\n')) {
-    if (stripAnsi(paragraph).length <= width) {
+    if (ansi.visibleLength(paragraph) <= width) {
       lines.push(paragraph)
       continue
     }
@@ -258,7 +256,7 @@ function wrapText(text: string, width: number): string {
     
     for (const word of words) {
       const test = current ? current + ' ' + word : word
-      if (stripAnsi(test).length <= width) {
+      if (ansi.visibleLength(test) <= width) {
         current = test
       } else {
         if (current) lines.push(current)
@@ -269,8 +267,4 @@ function wrapText(text: string, width: number): string {
   }
   
   return lines.join('\n')
-}
-
-function stripAnsi(s: string): string {
-  return s.replace(/\x1b\[[0-9;]*m/g, '')
 }

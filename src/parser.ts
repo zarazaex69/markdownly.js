@@ -264,9 +264,15 @@ export function parseInline(text: string): Token[] {
   let remaining = text
   
   while (remaining.length > 0) {
-    let matched = false
+    if (remaining.startsWith('\\') && remaining.length > 1) {
+      const escaped = remaining[1]
+      if ('*_`~[]!^=+\\'.includes(escaped)) {
+        tokens.push({ type: 'text', content: escaped })
+        remaining = remaining.slice(2)
+        continue
+      }
+    }
     
-    // image ![alt](url)
     const imgMatch = remaining.match(/^!\[([^\]]*)\]\(([^)]+)\)/)
     if (imgMatch) {
       tokens.push({
@@ -275,11 +281,9 @@ export function parseInline(text: string): Token[] {
         meta: { url: imgMatch[2] }
       })
       remaining = remaining.slice(imgMatch[0].length)
-      matched = true
       continue
     }
     
-    // link [text](url)
     const linkMatch = remaining.match(/^\[([^\]]+)\]\(([^)]+)\)/)
     if (linkMatch) {
       tokens.push({
@@ -288,21 +292,17 @@ export function parseInline(text: string): Token[] {
         meta: { url: linkMatch[2] }
       })
       remaining = remaining.slice(linkMatch[0].length)
-      matched = true
       continue
     }
     
-    // inline code
     const codeMatch = remaining.match(/^`([^`]+)`/)
     if (codeMatch) {
       tokens.push({ type: 'code_inline', content: codeMatch[1] })
       remaining = remaining.slice(codeMatch[0].length)
-      matched = true
       continue
     }
     
-    // bold **text** or __text__
-    const boldMatch = remaining.match(/^(\*\*|__)([^*_]+)\1/)
+    const boldMatch = remaining.match(/^(\*\*|__)(.+?)\1/)
     if (boldMatch) {
       tokens.push({ 
         type: 'bold', 
@@ -310,12 +310,10 @@ export function parseInline(text: string): Token[] {
         children: parseInline(boldMatch[2])
       })
       remaining = remaining.slice(boldMatch[0].length)
-      matched = true
       continue
     }
     
-    // italic *text* or _text_
-    const italicMatch = remaining.match(/^(\*|_)([^*_]+)\1/)
+    const italicMatch = remaining.match(/^(\*|_)(?!\s)(.+?)(?<!\s)\1(?![*_])/)
     if (italicMatch) {
       tokens.push({ 
         type: 'italic', 
@@ -323,68 +321,54 @@ export function parseInline(text: string): Token[] {
         children: parseInline(italicMatch[2])
       })
       remaining = remaining.slice(italicMatch[0].length)
-      matched = true
       continue
     }
     
-    // strikethrough ~~text~~
-    const strikeMatch = remaining.match(/^~~([^~]+)~~/)
+    const strikeMatch = remaining.match(/^~~(.+?)~~/)
     if (strikeMatch) {
       tokens.push({ type: 'strikethrough', content: strikeMatch[1] })
       remaining = remaining.slice(strikeMatch[0].length)
-      matched = true
       continue
     }
     
-    // mark ==text==
-    const markMatch = remaining.match(/^==([^=]+)==/)
+    const markMatch = remaining.match(/^==(.+?)==/)
     if (markMatch) {
       tokens.push({ type: 'mark', content: markMatch[1] })
       remaining = remaining.slice(markMatch[0].length)
-      matched = true
       continue
     }
     
-    // ins ++text++
-    const insMatch = remaining.match(/^\+\+([^+]+)\+\+/)
+    const insMatch = remaining.match(/^\+\+(.+?)\+\+/)
     if (insMatch) {
       tokens.push({ type: 'ins', content: insMatch[1] })
       remaining = remaining.slice(insMatch[0].length)
-      matched = true
       continue
     }
     
-    // sup ^text^
     const supMatch = remaining.match(/^\^([^^]+)\^/)
     if (supMatch) {
       tokens.push({ type: 'sup', content: supMatch[1] })
       remaining = remaining.slice(supMatch[0].length)
-      matched = true
       continue
     }
     
-    // sub ~text~
-    const subMatch = remaining.match(/^~([^~]+)~/)
+    const subMatch = remaining.match(/^~([^~\s]+)~/)
     if (subMatch) {
       tokens.push({ type: 'sub', content: subMatch[1] })
       remaining = remaining.slice(subMatch[0].length)
-      matched = true
       continue
     }
     
     if (remaining.startsWith('\n')) {
       tokens.push({ type: 'br', content: '\n' })
       remaining = remaining.slice(1)
-      matched = true
       continue
     }
     
-    if (!matched) {
-      const nextSpecial = remaining.slice(1).search(/[*_`~\[!\^=+\n]/)
-      const end = nextSpecial === -1 ? remaining.length : nextSpecial + 1
-      tokens.push({ type: 'text', content: remaining.slice(0, end) })
-      remaining = remaining.slice(end)
-    }
+    const nextSpecial = remaining.slice(1).search(/[\\*_`~\[!\^=+\n]/)
+    const end = nextSpecial === -1 ? remaining.length : nextSpecial + 1
+    tokens.push({ type: 'text', content: remaining.slice(0, end) })
+    remaining = remaining.slice(end)
   }
   
   return tokens
